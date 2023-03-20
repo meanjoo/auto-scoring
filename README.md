@@ -54,7 +54,7 @@ print(cv.__version__)
   * filename : 파일명  
   * img : 저장될 이미지
 
-example] RGB 이미지를 Grayscale로 읽어서 윈도우 창에 띄운 후 Esc를 누르면 창을 닫고, s를 누르면 이미지를 저장한 후 창을 닫는 코드
+**[example]** RGB 이미지를 Grayscale로 읽어서 윈도우 창에 띄운 후 Esc를 누르면 창을 닫고, s를 누르면 이미지를 저장한 후 창을 닫는 코드
 ```
 import cv2 as cv
 import sys

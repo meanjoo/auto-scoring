@@ -42,7 +42,7 @@ print(cv.__version__)
 
 * 보기: `cv2.imshow(winname, mat)` 함수를 이용한다. [reference](https://docs.opencv.org/4.x/d7/dfc/group__highgui.html#ga453d42fe4cb60e5723281a89973ee563)
 
-  * winname : 윈도우 창의 이름
+  * winname : 창의 이름
   * mat : 표시할 이미지
     
   ※ Note  
@@ -55,25 +55,31 @@ print(cv.__version__)
   * img : 저장될 이미지
   
 * 창 관리
-  * `cv2.namedWindow(winname[, flags])` : 새 윈도우를 만드는 함수 [reference](https://docs.opencv.org/4.x/d7/dfc/group__highgui.html#ga5afdf8410934fd099df85c75b2e0888b)
-  
-    * winname: 윈도우 창의 이름
-    * flags 옵션
-    
-      `WINDOW_NORMAL` :  
-      `WINDOW_AUTOSIZE` : default;  
-      `WINDOW_FREERATIO` :  
-      `WINDOW_KEEPRATIO` :  
-      `WINDOW_GUI_NORMAL` :  
-      `WINDOW_GUI_EXPANDED` :  
-    
-  * `cv2.moveWindow(winname, x, y)` [reference](https://docs.opencv.org/4.x/d7/dfc/group__highgui.html#ga8d86b207f7211250dbe6e28f76307ffb)
-  * `cv2.resizeWindow(winname, width, height)` [reference](https://docs.opencv.org/4.x/d7/dfc/group__highgui.html#ga9e80e080f7ef33f897e415358aee7f7e)
-  * `cv2.destroyWindow(winname)` [reference](https://docs.opencv.org/4.x/d7/dfc/group__highgui.html#ga851ccdd6961022d1d5b4c4f255dbab34)
-  * `cv2.destroyAllWindows()` [reference](https://docs.opencv.org/4.x/d7/dfc/group__highgui.html#ga6b7fc1c1a8960438156912027b38f481)
+  * `cv2.namedWindow(winname[, flags])` : 새 창을 만드는 함수 [reference](https://docs.opencv.org/4.x/d7/dfc/group__highgui.html#ga5afdf8410934fd099df85c75b2e0888b)
+    * winname: 창의 이름  
+    * flags 옵션  
+      ※ `cv2.namedWindow()`가 `cv2.imshow()`보다 선행하고, `cv2.namedWindow()`의 winname과 `cv2.imshow()`의 winname이 일치해야 flags 옵션이 해당 winname의 윈도우에 적용된다. 두 이름이 다르면 이름이 다른 창이 2개 생성된다.
+      
+      `cv2.WINDOW_NORMAL` : 사용자가 창 크기를 조절할 수 있다.  
+      `cv2.WINDOW_AUTOSIZE` : default; 이미지와 동일한 크기로 창이 생성되며 창 크기를 조절할 수 없다.
+  * `cv2.moveWindow(winname, x, y)` : 윈도우 위치 이동 [reference](https://docs.opencv.org/4.x/d7/dfc/group__highgui.html#ga8d86b207f7211250dbe6e28f76307ffb)
+    * winname : 창 이름
+    * x : 창을 이동시킬 위치의 x 좌표
+    * y : 창을 이동시킬 위치의 y 좌표
+  * `cv2.resizeWindow(winname, width, height)` : 창 크기 조절 [reference](https://docs.opencv.org/4.x/d7/dfc/group__highgui.html#ga9e80e080f7ef33f897e415358aee7f7e)
+    * winname : 창 이름
+    * width : 창의 너비
+    * height : 창의 높이
+  * `cv2.destroyWindow(winname)` : 창 이름이 winname인 특정 창 닫기 [reference](https://docs.opencv.org/4.x/d7/dfc/group__highgui.html#ga851ccdd6961022d1d5b4c4f255dbab34)
+    * winname : 창 이름
+  * `cv2.destroyAllWindows()` : 열린 모든 창 닫기 [reference](https://docs.opencv.org/4.x/d7/dfc/group__highgui.html#ga6b7fc1c1a8960438156912027b38f481)
 
 * 키보드 이벤트
-  * `cv2.waitKey([, delay])`
+  * `cv2.waitKey([, delay])` : 키보드 입력 대기 [reference](https://docs.opencv.org/4.x/d7/dfc/group__highgui.html#ga5628525ad33f52eab17feebcfba38bd7)
+    * delay  
+      0 : default; key 입력이 있을 때까지 무한 대기
+      
+    ※ Esc를 누르면 27을 return
 
 **[example]** RGB 이미지를 Grayscale로 읽어서 윈도우 창에 띄운 후 Esc를 누르면 창을 닫고, s를 누르면 이미지를 저장한 후 창을 닫는 코드
 ```

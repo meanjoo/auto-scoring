@@ -42,7 +42,7 @@ print(cv.__version__)
 
 * 보기: `cv2.imshow(winname, mat)` 함수를 이용한다. [reference](https://docs.opencv.org/4.x/d7/dfc/group__highgui.html#ga453d42fe4cb60e5723281a89973ee563)
 
-  * winname : 윈도우 창의 제목
+  * winname : 윈도우 창의 이름
   * mat : 표시할 이미지
     
   ※ Note  
@@ -55,11 +55,22 @@ print(cv.__version__)
   * img : 저장될 이미지
   
 * 창 관리
-  * `cv2.namedWindow()`
-  * `cv2.moveWindow()`
-  * `cv2.resizeWindow()`
-  * `cv2.destroyWindow(winname)`
-  * `cv2.destroyAllWindows()`  
+  * `cv2.namedWindow(winname[, flags])` : 새 윈도우를 만드는 함수 [reference](https://docs.opencv.org/4.x/d7/dfc/group__highgui.html#ga5afdf8410934fd099df85c75b2e0888b)
+  
+    * winname: 윈도우 창의 이름
+    * flags 옵션
+    
+      `WINDOW_NORMAL` :  
+      `WINDOW_AUTOSIZE` : default;  
+      `WINDOW_FREERATIO` :  
+      `WINDOW_KEEPRATIO` :  
+      `WINDOW_GUI_NORMAL` :  
+      `WINDOW_GUI_EXPANDED` :  
+    
+  * `cv2.moveWindow(winname, x, y)` [reference](https://docs.opencv.org/4.x/d7/dfc/group__highgui.html#ga8d86b207f7211250dbe6e28f76307ffb)
+  * `cv2.resizeWindow(winname, width, height)` [reference](https://docs.opencv.org/4.x/d7/dfc/group__highgui.html#ga9e80e080f7ef33f897e415358aee7f7e)
+  * `cv2.destroyWindow(winname)` [reference](https://docs.opencv.org/4.x/d7/dfc/group__highgui.html#ga851ccdd6961022d1d5b4c4f255dbab34)
+  * `cv2.destroyAllWindows()` [reference](https://docs.opencv.org/4.x/d7/dfc/group__highgui.html#ga6b7fc1c1a8960438156912027b38f481)
 
 * 키보드 이벤트
   * `cv2.waitKey([, delay])`

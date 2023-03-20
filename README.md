@@ -53,6 +53,16 @@ print(cv.__version__)
 
   * filename : 파일명  
   * img : 저장될 이미지
+  
+* 창 관리
+  * `cv2.namedWindow()`
+  * `cv2.moveWindow()`
+  * `cv2.resizeWindow()`
+  * `cv2.destroyWindow(winname)`
+  * `cv2.destroyAllWindows()`  
+
+* 키보드 이벤트
+  * `cv2.waitKey([, delay])`
 
 **[example]** RGB 이미지를 Grayscale로 읽어서 윈도우 창에 띄운 후 Esc를 누르면 창을 닫고, s를 누르면 이미지를 저장한 후 창을 닫는 코드
 ```

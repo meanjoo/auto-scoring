@@ -1,5 +1,6 @@
 import cv2 as cv
 import sys
+import copy
 
 '''
 * python 반복자
@@ -77,58 +78,77 @@ rects.sort(key=lambda rect : (rect.x, rect.y, rect.w, rect.w))
 
 # area = [rect.w*rect.h for rect in rects]
 # print(area)
-
 # area.sort()
 
 print('==rects==')
 print(rects)
-# print('==area==')
-# print(area)
-
-# width = set()
-# for x,y,w,h in rects:
-#     width.add(w)
-
-# print('==width set==')
-# print(width)
-# sort_width = list(width)
-# sort_width.sort()
-# print(sort_width)
-# print(len(sort_width))
 
 for rect in rects:
-    # color = (0,255,0) if w > sort_width[int(len(sort_width)*3/5)] else (0,0,255)
     color = (0,255,0)
     cv.rectangle(img, (rect.x, rect.y),
                 (rect.x + rect.w, rect.y + rect.h), color, 5)
 
-result = []
-for rect in rects:
-    # if not result:
-    #     result.append(rect)
-    #     continue
-    result.append(rect).sort(key=lambda rect : (rect.x, rect.y, rect.w, rect.w))
+crects = copy.deepcopy(rects)
+existIntersection = True
+while existIntersection and len(crects) > 1:
+    standardRect = crects[0]
+    slicerects = crects[1:]
 
     tmp = []
+    existIntersection = False
+    # for sr in slicerects:
+    #     if is_rect_intersect(standardRect, sr):
+    #         tmp.append(minimum_area_contain_two_rects(standardRect, sr))
+    #         existIntersection = True
+    #     else:
+    #         tmp.append(sr)
 
-    # if abs(result[-1].x - rect.x) >= 10 or abs(result[-1].y - rect.y) >= 10:
-    #     result.append(rect)
-    #     continue
+    for i in range(len(slicerects)):
+        if is_rect_intersect(standardRect, slicerects[i]):
+            rrr = minimum_area_contain_two_rects(standardRect, slicerects[i])
+            tmp.append(minimum_area_contain_two_rects(standardRect, slicerects[i]))
+            cv.rectangle(img2, (rrr.x, rrr.y),
+                (rrr.x + rrr.w, rrr.y + rrr.h), (255,0,0), 5)
+            existIntersection = True
+            tmp.extend(slicerects[i+1:])
+            break
+        else:
+            tmp.append(slicerects[i])
+    
+    if not existIntersection:
+        tmp.append(standardRect)
+    
+    crects = copy.deepcopy(tmp)
 
-    if is_rect_intersect(result[-1], rect):
-        t = result.pop()
-        result.append(minimum_area_contain_two_rects(t, rect))
-    else:
-        result.append(rect)
-
-print('==result==')
-print(result)
 
 print(len(rects))
-print(len(result))
+print(len(crects))
 
-for rect in result:
-    # color = (0,255,0) if w > sort_width[int(len(sort_width)*3/5)] else (0,0,255)
+# for rect in rects:
+#     # if not result:
+#     #     result.append(rect)
+#     #     continue
+#     result.append(rect).sort(key=lambda rect : (rect.x, rect.y, rect.w, rect.w))
+
+#     tmp = []
+
+#     # if abs(result[-1].x - rect.x) >= 10 or abs(result[-1].y - rect.y) >= 10:
+#     #     result.append(rect)
+#     #     continue
+
+#     if is_rect_intersect(result[-1], rect):
+#         t = result.pop()
+#         result.append(minimum_area_contain_two_rects(t, rect))
+#     else:
+#         result.append(rect)
+
+# print('==result==')
+# print(result)
+
+# print(len(rects))
+# print(len(result))
+
+for rect in crects:
     color = (0,255,0)
     cv.rectangle(img2, (rect.x, rect.y),
                 (rect.x + rect.w, rect.y + rect.h), color, 5)

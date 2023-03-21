@@ -8,7 +8,8 @@
 ## OpenCV
 `pip list`를 통해 설치된 패키지를 확인할 수 있다.
 
-### opencv 설치  
+### opencv 설치
+둘 중 하나를 설치해주면 된다.
 ```
 pip install opencv-python # 메인 모듈만 포함된 기본 Python OpenCV 패키지 
 pip install opencv-contrib-python # 메인 모듈과 확장 모듈이 포함된 패키지

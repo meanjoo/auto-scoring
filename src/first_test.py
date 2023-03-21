@@ -1,7 +1,7 @@
 import cv2 as cv
 import sys
 
-path = '../test_image' # 'C:/Users/user/Desktop/workspace/test_image'
+path = './test_image' # 'C:/Users/user/Desktop/workspace/test_image'
 img = cv.imread(path+'/sample2.jpg')
 gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
 

@@ -7,7 +7,7 @@ class Rect:
 def line_box_intersection(lineP0, lineP1, boxMinPt, boxMaxPt):
     pass
 
-path = '../test_image'
+path = './test_image'
 img = cv.imread(path+'/sample.jpeg')
 
 if img is None:

@@ -1,7 +1,7 @@
 import cv2 as cv
 import sys
 
-path = '../test_image'
+path = './test_image'
 img = cv.imread(path+'/sample.jpeg')
 
 

@@ -21,7 +21,7 @@ print(cv.__version__)
 ```
 설치 후에 위 코드를 통해 설치된 opencv의 버전이 출력되면 정상적으로 설치된 것이다.
 
-### 이미지
+### 이미지 읽기/보기/저장
 * 읽기: `cv2.imread(filename[, flags])` 함수를 이용한다. [reference](https://docs.opencv.org/4.x/d4/da8/group__imgcodecs.html#ga288b8b3da0892bd651fce07b3bbd3a56)
   
   색상을 표현하는 방법 중 빨강, 초록, 파랑 세 종류의 빛을 이용하여 색을 표현하는 RGB 방식이 있다.  
@@ -108,3 +108,7 @@ path 변수에 경로를 저장할 때 탐색기에서 경로를 그대로 복�
 오류를 없애기 위해서는 `path = C:/Users/user/Desktop/workspace/test_image` 또는 `path = C:\\Users\\user\\Desktop\\workspace\\test_image`로 변경해야 한다.  
 또는 path 변수 없이 `img = cv.imread(r'C:\Users\user\Desktop\workspace\test_image\sample1.jpg', cv.IMREAD_GRAYSCALE)`로도 해결할 수 있다.
 
+### 이미지 자르기
+`img[높이, 너비]`로 자를 수 있다. [] 안의 값은 **y 범위, x 범위** 순서로 써야 한다.
+
+`crop_img = img[:, :]` : x - 0\~img의 x 끝, y - 0\~img의 y 끝

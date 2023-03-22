@@ -36,6 +36,9 @@ class Rect:
 
     def __repr__(self):
         return repr((self.x, self.y, self.w, self.h))
+    
+    def __add__(self, other):
+        return (self.x + other.x, self.y + other.y, self.w + other.w, self.h + other.h)
 
 # def is_rect_intersect(rect1, rect2):
 #     minx = min(rect1.x, rect2.x)
@@ -58,7 +61,11 @@ class Rect:
 
 path = './test_image'
 img = cv.imread(path+'/newsample.jpeg')
+
 img2 = img.copy()
+img3 = img.copy()
+
+img4 = img.copy()
 
 if img is None:
     sys.exit('Could not read the image.')
@@ -76,7 +83,8 @@ contours, hier = cv.findContours(canny, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE
 rects = [Rect(cv.boundingRect(each)) for each in contours] # cv.boundingRect(each)는 사각형 정보 튜플(x,y,w,h)을 반환
 rects.sort(key=lambda rect : (rect.x, rect.y, rect.w, rect.w))
 
-crop, cropAll = [], []
+crop, cropAll = [], [] # 세로 분할, 세로 분할 된 거에서 가로 분할<-전체 분할
+
 # 세로로 자르기
 for rect in rects:
     tmp = (int)(rect.w / col)
@@ -90,11 +98,24 @@ for rect in crop:
         cropAll.append(Rect((rect.x, rect.y + tmp*r, rect.w, tmp)))
 
 result = []
+offset = 10 # hwptable은 5로
 for rect in cropAll:
-    croprect = canny[rect.y+rect.h:rect.x+rect.w]
-    contours, heir = cv.findContours(croprect, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE) # contours는 numpy.ndarray
-    result.extend(Rect(cv.boundingRect(each)) for each in contours)
+    sx = rect.x + offset
+    sy = rect.y + offset
+    ex = rect.x + rect.w - offset
+    ey = rect.y + rect.h - offset
+    # 보는 영역
+    cv.rectangle(img2, (sx, sy), (ex, ey), (0,255,0), 2)
+    
+    croped_img = canny[sy:ey, sx:ex]
+    contours, heir = cv.findContours(croped_img, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE) # contours는 numpy.ndarray
+    tmp = [Rect(cv.boundingRect(each)) for each in contours]
+    for t in tmp:
+        t.x += (rect.x + offset)
+        t.y += (rect.y + offset)
+    result.extend(tmp)
 
+cropAll.sort(key=lambda rect : (rect.x, rect.y, rect.w, rect.w))
 print('==crop==')
 print(crop)
 print('==cropAll==')
@@ -105,19 +126,22 @@ area.sort()
 print('==area==')
 print(area)
 
+# 가장 바깥 사각형
 for rect in rects:
     color = (0,255,0)
     cv.rectangle(img, (rect.x, rect.y),
-            (rect.x + rect.w, rect.y + rect.h), color, 5)
+            (rect.x + rect.w, rect.y + rect.h), color, 2)
 
 print('==result==')
 print(result)
-for rect in cropAll:
-    color = (0,255,0)
-    cv.rectangle(img2, (rect.x, rect.y),
-            (rect.x + rect.w, rect.y + rect.h), color, 5)
-    
+print(type(result[0]))
 
+# 숫자 찾기
+for rect in result:
+    color = (0,255,0)
+    cv.rectangle(img3, (rect.x, rect.y),
+            (rect.x + rect.w, rect.y + rect.h), color, 2)
+    
 
 k = cv.waitKey(0)
 
@@ -126,5 +150,6 @@ if k == 27:
 elif k == ord('s'):
     cv.imwrite('contourTest.jpg', img)
     cv.imwrite('contourTest2.jpg', img2)
+    cv.imwrite('contourTest3.jpg', img3)
     
     cv.destroyAllWindows()

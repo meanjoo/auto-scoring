@@ -39,6 +39,9 @@ class Rect:
     
     def __add__(self, other):
         return (self.x + other.x, self.y + other.y, self.w + other.w, self.h + other.h)
+    
+    def isSame(self, other):
+        return self.x == other.x and self.y == other.y and self.w == other.w and self.h == other.h
 
 # def is_rect_intersect(rect1, rect2):
 #     minx = min(rect1.x, rect2.x)
@@ -83,7 +86,7 @@ contours, hier = cv.findContours(canny, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE
 rects = [Rect(cv.boundingRect(each)) for each in contours] # cv.boundingRect(each)는 사각형 정보 튜플(x,y,w,h)을 반환
 rects.sort(key=lambda rect : (rect.x, rect.y, rect.w, rect.w))
 
-crop, cropAll = [], [] # 세로 분할, 세로 분할 된 거에서 가로 분할<-전체 분할
+crop, cropAll = [], [] # 세로 분할, 세로 분할 된 거에서 가로 분할<-한 문항으로 분할
 
 # 세로로 자르기
 for rect in rects:
@@ -98,6 +101,7 @@ for rect in crop:
         cropAll.append(Rect((rect.x, rect.y + tmp*r, rect.w, tmp)))
 
 result = []
+test = []
 offset = 10 # hwptable은 5로
 for rect in cropAll:
     sx = rect.x + offset
@@ -114,6 +118,27 @@ for rect in cropAll:
         t.x += (rect.x + offset)
         t.y += (rect.y + offset)
     result.extend(tmp)
+    
+    # 포함 관계 판단
+    tmp.sort(key=lambda rect : (rect.x, rect.y, rect.w, rect.w))
+    idx = 0
+    while idx < len(tmp)-1:
+        ix1 = max(tmp[idx].x, tmp[idx+1].x)
+        iy1 = max(tmp[idx].y, tmp[idx+1].y)
+        ix2 = min(tmp[idx].x+tmp[idx].w, tmp[idx+1].x+tmp[idx+1].w)
+        iy2 = min(tmp[idx].y+tmp[idx].h, tmp[idx+1].y+tmp[idx+1].h)
+
+        ir = Rect((ix1, iy1, ix2-ix1, iy2-iy1))
+        if tmp[idx].isSame(ir):
+            # 포함되는 사각형 중 큰 사각형만 idx번째에 남기기
+            tmp[idx] = tmp[idx+1]
+            tmp.pop(idx+1)
+        elif tmp[idx+1].isSame(ir):
+            tmp.pop(idx+1)
+        else:
+            idx += 1
+    test.extend(tmp)
+
 
 cropAll.sort(key=lambda rect : (rect.x, rect.y, rect.w, rect.w))
 print('==crop==')
@@ -141,7 +166,12 @@ for rect in result:
     color = (0,255,0)
     cv.rectangle(img3, (rect.x, rect.y),
             (rect.x + rect.w, rect.y + rect.h), color, 2)
-    
+
+# img4 그리기
+for rect in test:
+    color = (255,0,255)
+    cv.rectangle(img4, (rect.x, rect.y),
+            (rect.x + rect.w, rect.y + rect.h), color, 2)
 
 k = cv.waitKey(0)
 
@@ -151,5 +181,7 @@ elif k == ord('s'):
     cv.imwrite('contourTest.jpg', img)
     cv.imwrite('contourTest2.jpg', img2)
     cv.imwrite('contourTest3.jpg', img3)
+
+    cv.imwrite('contourTest4.jpg', img4)
     
     cv.destroyAllWindows()

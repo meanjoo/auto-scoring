@@ -64,6 +64,7 @@ class Rect:
 
 path = './test_image'
 img = cv.imread(path+'/newsample.jpeg')
+# img = cv.imread(path+'/sample.jpeg')
 
 if img is None:
     sys.exit('Could not read the image.')
@@ -74,12 +75,18 @@ img3 = img.copy()
 
 img4 = img.copy()
 
+
 cv.namedWindow('image', cv.WINDOW_NORMAL)
 cv.imshow('image', img)
 
 gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-blur = cv.GaussianBlur(gray, (3,3),0)
-canny = cv.Canny(blur, 100, 200)
+# cv.threshold(흑백 이미지, 임계값, 임계값 만족 시 적용할 값(value), 타입)
+# 타입-THRESH_BINARY: 흑백 이미지의 픽셀 값이 임계값을 넘으면 value로 지정하고 넘지 못하면 0으로 지정
+#     -THRES_BINARY_INV: 위와 반대
+border, binary = cv.threshold(gray, 100, 255, cv.THRESH_BINARY) # 흑백 이미지 이진화 (0: 검은색, 255: 흰색)
+
+# blur = cv.GaussianBlur(gray, (3,3),0)
+canny = cv.Canny(binary, 100, 200)
 
 row, col = 6,2
 contours, hier = cv.findContours(canny, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
@@ -174,11 +181,34 @@ for rect in extract:
             (rect.x + rect.w, rect.y + rect.h), color, 2)
     
 # box 저장
-# 손실 최소화 -> 기존 크기에서 max(x,y)로 resize: 이미지 연산 처리 -> 28,28로 resize
+# 손실 최소화 -> 기존 크기의 max(x,y)를 한 변으로 하는 정사각형으로 흰 배경을 resize하고 그 위에 숫자 합성(이미지 연산) -> 28,28로 resize
+# 바로 28,28로 resize 하면 비율이 이상해짐
 savepath = './save_test'
+whiteBg = cv.imread(path + '/white_bg.jpg', cv.IMREAD_GRAYSCALE)
+
+# 크기 다른 이미지 합성
+# https://yeko90.tistory.com/entry/opencv-%EB%91%90-%EC%9D%B4%EB%AF%B8%EC%A7%80-%ED%95%A9%EC%B9%98%EB%8A%94-%EB%B0%A9%EB%B2%95-%ED%81%AC%EA%B8%B0-%EB%8B%A4%EB%A5%B8-%EC%9D%B4%EB%AF%B8%EC%A7%80
 for i in range(len(extract)):
-    cv.imwrite(savepath + '/image' + str(i) + '.jpg', gray[extract[i].y:extract[i].y+extract[i].h, extract[i].x:extract[i].x+extract[i].w])
-    # cv.imwrite(savepath + '/image_inter_area' + str(i) + '.jpg', cv.resize(gray[extract[i].y:extract[i].y+extract[i].h, extract[i].x:extract[i].x+extract[i].w], dsize=(28,28), interpolation=cv.INTER_AREA))
+    target = binary[extract[i].y:extract[i].y+extract[i].h, extract[i].x:extract[i].x+extract[i].w] # 사각형 영역 추출
+    mask = 255 - target
+    squareimg = cv.resize(whiteBg.copy(), dsize=(max(extract[i].w, extract[i].h)+1, max(extract[i].w, extract[i].h)+1)) # +1 해준 건 밑에 sx, sy 연산에서 int로 변하면서 범위에 문제 생길까봐?
+
+    # print(target.shape[:2], extract[i].h, extract[i].w)
+    sx = (int)((extract[i].h - extract[i].w) / 2) if extract[i].h >= extract[i].w else 0
+    sy = (int)((extract[i].w- extract[i].h) / 2) if extract[i].w >= extract[i].h else 0
+    crop = squareimg[sy:sy+extract[i].h, sx:sx+extract[i].w]
+    cv.copyTo(target, mask, crop)
+
+    cv.imwrite(savepath + '/squareimg' + str(i) + '.jpg', squareimg)
+
+    # python opencv에서 img.shape를 통해 이미지 크기를 알 수 있다. tuple-(height, weight) <- 흑백 이미지
+    # 컬러 이미지면 채널도 가져온다. (height, weight, channel)
+    if squareimg.shape[0] > 28: # 이미지 축소 - INTER_AREA
+        squareimg = cv.resize(squareimg, (28,28), interpolation=cv.INTER_AREA)
+    elif squareimg.shape[0] < 28: # 이미지 확대 - INTER_LINEAR(default, slow) / INTER_CUBIC(linear보다 느리지만 품질 굿)
+        squareimg = cv.resize(squareimg, (28,28), interpolation=cv.INTER_LINEAR)
+    cv.imwrite(savepath + '/square28img' + str(i) + '.jpg', squareimg)
+
 
 k = cv.waitKey(0)
 

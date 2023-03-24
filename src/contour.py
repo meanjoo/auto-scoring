@@ -174,7 +174,7 @@ for rect in extract:
             (rect.x + rect.w, rect.y + rect.h), color, 2)
     
 # box 저장
-# 손실 최소화 -> 기존 크기에서 max(x,y)로 resize -> 28,28로 resize
+# 손실 최소화 -> 기존 크기에서 max(x,y)로 resize: 이미지 연산 처리 -> 28,28로 resize
 savepath = './save_test'
 for i in range(len(extract)):
     cv.imwrite(savepath + '/image' + str(i) + '.jpg', gray[extract[i].y:extract[i].y+extract[i].h, extract[i].x:extract[i].x+extract[i].w])

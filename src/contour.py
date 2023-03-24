@@ -65,13 +65,14 @@ class Rect:
 path = './test_image'
 img = cv.imread(path+'/newsample.jpeg')
 
+if img is None:
+    sys.exit('Could not read the image.')
+
+img1 = img.copy()
 img2 = img.copy()
 img3 = img.copy()
 
 img4 = img.copy()
-
-if img is None:
-    sys.exit('Could not read the image.')
 
 cv.namedWindow('image', cv.WINDOW_NORMAL)
 cv.imshow('image', img)
@@ -100,8 +101,7 @@ for rect in crop:
     for r in range(row):
         cropAll.append(Rect((rect.x, rect.y + tmp*r, rect.w, tmp)))
 
-result = []
-test = []
+result, extract = [], []
 offset = 10 # hwptable은 5로
 for rect in cropAll:
     sx = rect.x + offset
@@ -137,7 +137,7 @@ for rect in cropAll:
             tmp.pop(idx+1)
         else:
             idx += 1
-    test.extend(tmp)
+    extract.extend(tmp)
 
 
 cropAll.sort(key=lambda rect : (rect.x, rect.y, rect.w, rect.w))
@@ -154,31 +154,38 @@ print(area)
 # 가장 바깥 사각형
 for rect in rects:
     color = (0,255,0)
-    cv.rectangle(img, (rect.x, rect.y),
+    cv.rectangle(img1, (rect.x, rect.y),
             (rect.x + rect.w, rect.y + rect.h), color, 2)
 
 print('==result==')
 print(result)
 print(type(result[0]))
 
-# 숫자 찾기
+# 숫자 찾기, img3
 for rect in result:
     color = (0,255,0)
     cv.rectangle(img3, (rect.x, rect.y),
             (rect.x + rect.w, rect.y + rect.h), color, 2)
 
 # img4 그리기
-for rect in test:
+for rect in extract:
     color = (255,0,255)
     cv.rectangle(img4, (rect.x, rect.y),
             (rect.x + rect.w, rect.y + rect.h), color, 2)
+    
+# box 저장
+# 손실 최소화 -> 기존 크기에서 max(x,y)로 resize -> 28,28로 resize
+savepath = './save_test'
+for i in range(len(extract)):
+    cv.imwrite(savepath + '/image' + str(i) + '.jpg', gray[extract[i].y:extract[i].y+extract[i].h, extract[i].x:extract[i].x+extract[i].w])
+    # cv.imwrite(savepath + '/image_inter_area' + str(i) + '.jpg', cv.resize(gray[extract[i].y:extract[i].y+extract[i].h, extract[i].x:extract[i].x+extract[i].w], dsize=(28,28), interpolation=cv.INTER_AREA))
 
 k = cv.waitKey(0)
 
 if k == 27:
     cv.destroyAllWindows()
 elif k == ord('s'):
-    cv.imwrite('contourTest.jpg', img)
+    cv.imwrite('contourTest.jpg', img1)
     cv.imwrite('contourTest2.jpg', img2)
     cv.imwrite('contourTest3.jpg', img3)
 

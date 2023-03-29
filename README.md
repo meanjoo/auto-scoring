@@ -1,4 +1,5 @@
 # auto-scoring
+시험지 자동 채점 프로그램
 
 ## Environment
 * Editor: vscode  

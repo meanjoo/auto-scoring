@@ -1,4 +1,5 @@
 # auto-scoring
+시험지 자동 채점 프로그램
 
 ## Environment
 * Editor: vscode  
@@ -6,7 +7,7 @@
 * OpenCV 4.7.0  
 
 ## OpenCV
-`pip list`를 통해 설치된 패키지를 확인할 수 있다.
+`pip list`를 통해 설치된 패키지를 확인할 수 있다. opencv가 없다면 설치해주자.
 
 ### opencv 설치
 둘 중 하나를 설치해주면 된다.

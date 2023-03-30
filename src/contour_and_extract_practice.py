@@ -82,7 +82,7 @@ cv.imshow('image', img)
 gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
 # cv.threshold(흑백 이미지, 임계값, 임계값 만족 시 적용할 값(value), 타입)
 # 타입-THRESH_BINARY: 흑백 이미지의 픽셀 값이 임계값을 넘으면 value로 지정하고 넘지 못하면 0으로 지정
-#     -THRES_BINARY_INV: 위와 반대
+#     -THRESH_BINARY_INV: 위와 반대
 border, binary = cv.threshold(gray, 100, 255, cv.THRESH_BINARY) # 흑백 이미지 이진화 (0: 검은색, 255: 흰색)
 
 # blur = cv.GaussianBlur(gray, (3,3),0)
@@ -216,6 +216,8 @@ for i in range(len(extract)):
         squareimg = cv.resize(squareimg, (28,28), interpolation=cv.INTER_LINEAR)
     # cv.imwrite(savepath + '/square28img' + str(i) + '.jpg', squareimg)
     cv.imwrite(savepath + '/newsquare28img' + str(i) + '.jpg', squareimg)
+
+    # cv.imwrite(savepath + '/square28img_inv' + str(i) + '.jpg', 255-squareimg) # 지금 저장된 건 흰 배경에 검은 글씬데 검은 배경에 흰 글씨로 하고 싶으면 이렇게 저장
 
 
 

@@ -1,5 +1,5 @@
 # auto-scoring
-시험지 자동 채점 프로그램
+시험 자동 채점 프로그램 개발을 위한 공부
 
 ## Environment
 * Editor: vscode  

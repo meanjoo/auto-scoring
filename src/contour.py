@@ -191,15 +191,22 @@ whiteBg = cv.imread(path + '/white_bg.jpg', cv.IMREAD_GRAYSCALE)
 for i in range(len(extract)):
     target = binary[extract[i].y:extract[i].y+extract[i].h, extract[i].x:extract[i].x+extract[i].w] # 사각형 영역 추출
     mask = 255 - target
-    squareimg = cv.resize(whiteBg.copy(), dsize=(max(extract[i].w, extract[i].h)+1, max(extract[i].w, extract[i].h)+1)) # +1 해준 건 밑에 sx, sy 연산에서 int로 변하면서 범위에 문제 생길까봐?
+    sz = (int)(max(extract[i].w, extract[i].h) * 1.5)
+    squareimg = cv.resize(whiteBg.copy(), dsize=(sz,sz)) # +1 해준 건 밑에 sx, sy 연산에서 int로 변하면서 범위에 문제 생길까봐?
 
     # print(target.shape[:2], extract[i].h, extract[i].w)
-    sx = (int)((extract[i].h - extract[i].w) / 2) if extract[i].h >= extract[i].w else 0
-    sy = (int)((extract[i].w- extract[i].h) / 2) if extract[i].w >= extract[i].h else 0
+    # squareimg 중심: (sz/2, sz/2)
+    # img의 시작점: (sz/2 - w/2, sz/2 - h/2)
+    # sx = (int)((extract[i].h - extract[i].w) / 2) if extract[i].h >= extract[i].w else 0
+    # sy = (int)((extract[i].w- extract[i].h) / 2) if extract[i].w >= extract[i].h else 0
+    sx = (int)(sz/2 - extract[i].w/2)
+    sy = (int)(sz/2 - extract[i].h/2)
     crop = squareimg[sy:sy+extract[i].h, sx:sx+extract[i].w]
     cv.copyTo(target, mask, crop)
 
-    cv.imwrite(savepath + '/squareimg' + str(i) + '.jpg', squareimg)
+    # cv.imwrite(savepath + '/squareimg' + str(i) + '.jpg', squareimg)
+    cv.imwrite(savepath + '/newsquareimg' + str(i) + '.jpg', squareimg)
+
 
     # python opencv에서 img.shape를 통해 이미지 크기를 알 수 있다. tuple-(height, weight) <- 흑백 이미지
     # 컬러 이미지면 채널도 가져온다. (height, weight, channel)
@@ -207,7 +214,9 @@ for i in range(len(extract)):
         squareimg = cv.resize(squareimg, (28,28), interpolation=cv.INTER_AREA)
     elif squareimg.shape[0] < 28: # 이미지 확대 - INTER_LINEAR(default, slow) / INTER_CUBIC(linear보다 느리지만 품질 굿)
         squareimg = cv.resize(squareimg, (28,28), interpolation=cv.INTER_LINEAR)
-    cv.imwrite(savepath + '/square28img' + str(i) + '.jpg', squareimg)
+    # cv.imwrite(savepath + '/square28img' + str(i) + '.jpg', squareimg)
+    cv.imwrite(savepath + '/newsquare28img' + str(i) + '.jpg', squareimg)
+
 
 
 k = cv.waitKey(0)

@@ -125,8 +125,9 @@ for rect in cropAll:
         t.x += (rect.x + offset)
         t.y += (rect.y + offset)
     result.extend(tmp)
+    result.append(Rect((-1,-1,-1,-1)))
     
-    # 포함 관계 판단
+    # 포함 관계 판단 : 얘 뭐지?
     tmp.sort(key=lambda rect : (rect.x, rect.y, rect.w, rect.w))
     idx = 0
     while idx < len(tmp)-1:
@@ -145,6 +146,7 @@ for rect in cropAll:
         else:
             idx += 1
     extract.extend(tmp)
+    extract.append(Rect((-1,-1,-1,-1)))
 
 
 cropAll.sort(key=lambda rect : (rect.x, rect.y, rect.w, rect.w))
@@ -168,14 +170,20 @@ print('==result==')
 print(result)
 print(type(result[0]))
 
+print('==extract==')
+print(extract)
+print(type(extract[0]))
+
 # 숫자 찾기, img3
 for rect in result:
+    if (rect.x == -1): continue
     color = (0,255,0)
     cv.rectangle(img3, (rect.x, rect.y),
             (rect.x + rect.w, rect.y + rect.h), color, 2)
 
 # img4 그리기
 for rect in extract:
+    if (rect.x == -1): continue
     color = (255,0,255)
     cv.rectangle(img4, (rect.x, rect.y),
             (rect.x + rect.w, rect.y + rect.h), color, 2)
@@ -189,6 +197,10 @@ whiteBg = cv.imread(path + '/white_bg.jpg', cv.IMREAD_GRAYSCALE)
 # 크기 다른 이미지 합성
 # https://yeko90.tistory.com/entry/opencv-%EB%91%90-%EC%9D%B4%EB%AF%B8%EC%A7%80-%ED%95%A9%EC%B9%98%EB%8A%94-%EB%B0%A9%EB%B2%95-%ED%81%AC%EA%B8%B0-%EB%8B%A4%EB%A5%B8-%EC%9D%B4%EB%AF%B8%EC%A7%80
 for i in range(len(extract)):
+    if (extract[i].x == -1):
+        cv.imwrite(savepath + '/newsquare28img' + str(i) + '.jpg', cv.resize(whiteBg, (28,28), interpolation=cv.INTER_AREA))
+        continue
+
     target = binary[extract[i].y:extract[i].y+extract[i].h, extract[i].x:extract[i].x+extract[i].w] # 사각형 영역 추출
     mask = 255 - target
     sz = (int)(max(extract[i].w, extract[i].h) * 1.5)
